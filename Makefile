@@ -1,22 +1,23 @@
-TOOLCHAIN=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-centos6/bin/riscv64-unknown-elf-
+CROSSCOMPILE?=riscv64-unknown-elf-
 
 SRCS := main.c
-SRCS += util/pr.c
-# SRCS += gpu/bios.c
 
-.PHONY: install clean
+.PHONY: bin clean all dasm
+
+all: bin dasm
+
+bin: build/prog.bin
 
 build/prog.bin: build/prog
-	$(TOOLCHAIN)objcopy -O binary $< $@
+	$(CROSSCOMPILE)objcopy -O binary $< $@
 
-build/prog: link.ld _start.s $(SRCS)
-	$(TOOLCHAIN)gcc -march=rv64gc -mabi=lp64d -static -mcmodel=medany -nostdlib -nostartfiles -I. -O0 -o $@ -T link.ld _start.s $(SRCS)
+build/prog: link.ld _start.s syscalls.c vectors.s $(SRCS)
+	$(CROSSCOMPILE)gcc -march=rv64imac -mabi=lp64 -static -mcmodel=medany -nostartfiles -I. -O0 -o $@ -T link.ld _start.s syscalls.c vectors.s $(SRCS)
 
-install: build/prog.bin
-#	sudo cp $< /var/lib/tftpboot/
+dasm: build/prog.s
 
-dasm: build/prog
-	$(TOOLCHAIN)objdump -d $<
+build/prog.s: build/prog
+	$(CROSSCOMPILE)objdump -d $< > $@
 
 clean:
-	sudo rm -rf /var/lib/tftpboot/prog.bin build/*
+	rm -rf build/*
