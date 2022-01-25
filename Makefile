@@ -1,6 +1,7 @@
 CROSSCOMPILE?=riscv64-unknown-elf-
 
 SRCS := main.c
+SRCS += driver/gpio.c
 
 .PHONY: bin clean all dasm
 
@@ -12,7 +13,7 @@ build/prog.bin: build/prog
 	$(CROSSCOMPILE)objcopy -O binary $< $@
 
 build/prog: link.ld _start.s syscalls.c vectors.s $(SRCS)
-	$(CROSSCOMPILE)gcc -march=rv64imac -mabi=lp64 -static -mcmodel=medany -nostartfiles -I. -O0 -o $@ -T link.ld _start.s syscalls.c vectors.s $(SRCS)
+	$(CROSSCOMPILE)gcc -march=rv64imac -mabi=lp64 -static -mcmodel=medany -nostartfiles -I. -O0 -o $@ -T $^
 
 dasm: build/prog.s
 
