@@ -7,7 +7,8 @@
 
 #include <stdint.h>
 
-#define GPIO_0 (0x10060000UL)
+#define PWM_0   (0x10020000UL)
+#define GPIO_0  (0x10060000UL)
 
 static inline uint32_t mmioRead32(uint64_t address) {
     return *((volatile uint32_t*)address);

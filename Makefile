@@ -2,6 +2,7 @@ CROSSCOMPILE?=riscv64-unknown-elf-
 
 SRCS := main.c
 SRCS += driver/gpio.c
+SRCS += driver/pwm.c
 
 .PHONY: bin clean all dasm
 
