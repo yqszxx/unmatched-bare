@@ -22,4 +22,6 @@ void gpioSetMode(uint8_t pin, GpioMode mode);
 
 GpioState gpioRead(uint8_t pin);
 
+void gpioWrite(uint8_t pin, GpioState state);
+
 #endif //__DRIVER_GPIO__

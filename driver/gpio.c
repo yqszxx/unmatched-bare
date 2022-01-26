@@ -8,6 +8,7 @@
 #define INPUT_VAL   (0x00)
 #define INPUT_EN    (0x04)
 #define OUTPUT_EN   (0x08)
+#define OUTPUT_VAL  (0x0C)
 
 void gpioSetMode(uint8_t pin, GpioMode mode) {
     uint32_t inputEn  = mmioRead32(GPIO_0 +  INPUT_EN);
@@ -38,4 +39,20 @@ GpioState gpioRead(uint8_t pin) {
     } else {
         return LOW;
     }
+}
+
+void gpioWrite(uint8_t pin, GpioState state) {
+    uint32_t outputVal = mmioRead32(GPIO_0 + OUTPUT_VAL);
+    uint32_t pinMask = 1 << pin;
+
+    switch (state) {
+        case HIGH:
+            outputVal |=  pinMask;
+            break;
+        case LOW:
+            outputVal &= ~pinMask;
+            break;
+    }
+
+    mmioWrite32(GPIO_0 + OUTPUT_VAL, outputVal);
 }
