@@ -205,7 +205,7 @@ int _wait(int *status)
 
 ssize_t _write(int file, const void *ptr, size_t len)
 {
-    if (file != STDOUT_FILENO) {
+    if (file != STDOUT_FILENO && file != STDERR_FILENO) {
         errno = ENOSYS;
         return -1;
     }
