@@ -29,7 +29,7 @@ SECTIONS
   } >ram
 
   /* interrupt vectors */
-  .vectors :
+  .vectors : ALIGN(256)
   {
     PROVIDE(__vector_start = .);
     KEEP(*(.vectors));
