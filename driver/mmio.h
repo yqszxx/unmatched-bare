@@ -10,6 +10,10 @@
 #define PWM_0       ( 0x10020000ULL)
 #define GPIO_0      ( 0x10060000ULL)
 #define PCIE_MGMT   ( 0x100D0000ULL)
+#define PCIE_CFG    ( 0x60070000ULL)
+#define PCIE_CFG_SIZE   (0x10000ULL)
+#define PCIE_IO     ( 0x60080000ULL)
+#define PCIE_IO_SIZE    (0x10000ULL)
 #define PCIE_DBI    (0xE00000000ULL)
 
 static inline uint32_t mmioRead32(uint64_t address) {

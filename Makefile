@@ -1,9 +1,11 @@
 CROSSCOMPILE?=riscv64-unknown-elf-
 
+PCIE_SRCS := driver/pcie-init.c driver/pcie-cfg.c
+
 SRCS := main.c
 SRCS += driver/gpio.c
 SRCS += driver/pwm.c
-SRCS += driver/pcie.c
+SRCS += $(PCIE_SRCS)
 
 .PHONY: bin clean all dasm
 
