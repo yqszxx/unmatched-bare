@@ -14,3 +14,16 @@ int main() {
     LOG_PCIE_CFG_READ(1, 0, 0, 0);
     return 0;
 }
+
+void sw_irq_handler() {
+    uint64_t mcause, mepc, mtval;
+    asm volatile ("csrr %0, mcause" : "=r"(mcause));
+    asm volatile ("csrr %0, mepc" : "=r"(mepc));
+    asm volatile ("csrr %0, mtval" : "=r"(mtval));
+
+    printf("!!%016lX %016lX %016lX!!\r\n", mcause, mepc, mtval);
+
+    while (1) {
+        asm volatile ("wfi");
+    }
+}
