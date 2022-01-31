@@ -150,10 +150,12 @@ static uint32_t updateVal(uint32_t old, uint32_t value, uint8_t offset, WriteWid
             valueMask = 0xFF;
             break;
         case WRITE16:
+            assert((offset & 0x1) == 0);    // 16 bit aligned
             offsetMask = 0x2;
             valueMask = 0xFFFF;
             break;
         default:
+            assert((offset & 0x3) == 0);    // 32 bit aligned
             return value;
     }
 
@@ -165,7 +167,8 @@ static uint32_t updateVal(uint32_t old, uint32_t value, uint8_t offset, WriteWid
 static void pcieCfgWrite(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint32_t data, WriteWidth width) {
     assert(d < 32);
     assert(f < 8);
-    assert((offset & 0x3) == 0);    // 32 bit aligned
+
+    uint64_t alignedOffset = offset & (~0x3);
 
     // construct bdf address, pcie-spec-1.0, fig 2-12 (p68)
     uint32_t bdf = (b << 24) | (d << 19) | (f << 16);
@@ -173,9 +176,9 @@ static void pcieCfgWrite(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint32
     if (b == 0) {   // bus 0 (bus inside rc)
         if (d == 0) {
             // access using dbi
-            uint32_t val = mmioRead32(PCIE_DBI + offset);
+            uint32_t val = mmioRead32(PCIE_CFG + alignedOffset);
             val = updateVal(val, data, offset, width);
-            mmioWrite32(PCIE_DBI + offset, val);
+            mmioWrite32(PCIE_DBI + alignedOffset, val);
         } else {
             // bus 0 contains only one device
             // do nothing
@@ -185,9 +188,9 @@ static void pcieCfgWrite(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint32
             // on local bus, TLP header type is CFG0
             pcieProgramATU(1, PCIE_CFG, bdf, PCIE_CFG_SIZE, PCIE_TYPE_CFG0);
 
-            uint32_t val = mmioRead32(PCIE_CFG + offset);
+            uint32_t val = mmioRead32(PCIE_CFG + alignedOffset);
             val = updateVal(val, data, offset, width);
-            mmioWrite32(PCIE_CFG + offset, val);
+            mmioWrite32(PCIE_CFG + alignedOffset, val);
 
             // restore io space mapping
             pcieProgramATU(1, PCIE_IO, PCIE_IO, PCIE_IO_SIZE, PCIE_TYPE_IO);
@@ -199,9 +202,9 @@ static void pcieCfgWrite(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint32
         // on local bus, TLP header type is CFG0
         pcieProgramATU(1, PCIE_CFG, bdf, PCIE_CFG_SIZE, PCIE_TYPE_CFG1);
 
-        uint32_t val = mmioRead32(PCIE_CFG + offset);
+        uint32_t val = mmioRead32(PCIE_CFG + alignedOffset);
         val = updateVal(val, data, offset, width);
-        mmioWrite32(PCIE_CFG + offset, val);
+        mmioWrite32(PCIE_CFG + alignedOffset, val);
 
         // restore io space mapping
         pcieProgramATU(1, PCIE_IO, PCIE_IO, PCIE_IO_SIZE, PCIE_TYPE_IO);
