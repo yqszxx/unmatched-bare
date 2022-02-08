@@ -108,7 +108,7 @@ uint16_t pcieCfgRead16(uint8_t b, uint8_t d, uint8_t f, uint8_t offset) {
 
     uint32_t val = pcieCfgRead32(b, d, f, offset & (~0x3));
 
-    switch (offset & 0x1) {
+    switch ((offset >> 1) & 0x1) {
         case 0:
             return (val & 0xFFFF);
         case 1:
