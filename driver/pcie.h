@@ -17,4 +17,6 @@ void pcieCfgWrite32(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint32_t da
 void pcieCfgWrite16(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint16_t data);
 void pcieCfgWrite8(uint8_t b, uint8_t d, uint8_t f, uint8_t offset, uint8_t data);
 
+void pcieEnum();
+
 #endif //__DRIVER_PCIE__

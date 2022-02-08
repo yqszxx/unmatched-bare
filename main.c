@@ -3,15 +3,16 @@
 #include "driver/pwm.h"
 #include "driver/pcie.h"
 
-#define LOG_PCIE_CFG_READ(b, d, f, o) printf("(" #b "," #d "," #f "," #o ")=0x%08X\r\n", pcieCfgRead32((b), (d), (f), (o)))
+#define LOG_PCIE_CFG_READ32(b, d, f, o) printf("(" #b "," #d "," #f "," #o ")=0x%08X\r\n", pcieCfgRead32((b), (d), (f), (o)))
+#define LOG_PCIE_CFG_READ16(b, d, f, o) printf("(" #b "," #d "," #f "," #o ")=0x%04X\r\n", pcieCfgRead16((b), (d), (f), (o)))
+#define LOG_PCIE_CFG_READ8(b, d, f, o) printf("(" #b "," #d "," #f "," #o ")=0x%02X\r\n", pcieCfgRead8((b), (d), (f), (o)))
+#define LOG_PCIE_CFG_WRITE8(b, d, f, o, dt) do { printf("(" #b "," #d "," #f "," #o ")<=0x%02X\r\n", dt); pcieCfgWrite8((b), (d), (f), (o), (dt)); } while (0)
 
 int main() {
     printf("Hello!\r\n");
     pwmTest();
     pcieInit();
-    LOG_PCIE_CFG_READ(0, 0, 0, 0);
-    LOG_PCIE_CFG_READ(0, 1, 0, 0);
-    LOG_PCIE_CFG_READ(1, 0, 0, 0);
+    pcieEnum();
     return 0;
 }
 
